@@ -24,9 +24,9 @@ const scrapeListings = async (url) => {
   });
   const page = await browser.newPage();
   
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0')
+  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36');
 
-  await page.setViewport({ width: 1080, height: 1024 })
+  await page.setViewport({ width: 1920, height: 1080 })
 
   let currentPage = 1;
   const allListings = [];
