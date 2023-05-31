@@ -1,16 +1,16 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
-// const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-// const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 
-// puppeteer.use(StealthPlugin());
-// puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+puppeteer.use(StealthPlugin());
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
 
   const browser = await puppeteer.launch({
-    // headless: "new",
+    headless: false,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
