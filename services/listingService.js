@@ -15,6 +15,7 @@ const scrapeListings = async (url) => {
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
+      "--disable-features=site-per-process", // Disable Content Security Policy
     ],
     executablePath:
       process.env.NODE_ENV === "production"
