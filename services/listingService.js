@@ -10,7 +10,7 @@ const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
 
   const browser = await puppeteer.launch({
-    headless: "new",
+    // headless: "new",
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
@@ -23,6 +23,8 @@ const scrapeListings = async (url) => {
         : puppeteer.executablePath(),
   });
   const page = await browser.newPage();
+  
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0')
 
   await page.setViewport({ width: 1080, height: 1024 })
 
