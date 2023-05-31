@@ -1,3 +1,4 @@
+require("dotenv").config();
 const puppeteer = require("puppeteer");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const axios = require("axios");
