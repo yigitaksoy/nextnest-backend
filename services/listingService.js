@@ -10,7 +10,7 @@ const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
 
   const browser = await puppeteer.launch({
-    // headless: "new",
+    headless: "new",
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
