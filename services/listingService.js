@@ -1,18 +1,10 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const axios = require("axios");
+const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 
 puppeteer.use(StealthPlugin());
-
-const getHeaders = async (url) => {
-  const response = await axios.get(url, { validateStatus: false });
-  const headers = {
-    "User-Agent": response.headers["user-agent"],
-    Cookie: response.headers["set-cookie"],
-  };
-  return headers;
-};
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
@@ -24,20 +16,14 @@ const scrapeListings = async (url) => {
       "--single-process",
       "--no-zygote",
     ],
+    executablePath:
+      process.env.NODE_ENV === "production"
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
   });
   const page = await browser.newPage();
-
-  const headers = await getHeaders(url);
-  await page.setUserAgent(headers["User-Agent"]);
-
-  const options = {
-    headers: {
-      "User-Agent": headers["User-Agent"],
-      Cookie: headers.Cookie,
-    },
-  };
-
-  // Rest of your existing code...
+  
+  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36');
 
   await page.setViewport({ width: 1080, height: 1024 });
 
@@ -59,9 +45,7 @@ const scrapeListings = async (url) => {
         const linkElement = element.querySelector(
           ".search-result-main a[data-object-url-tracking='resultlist']"
         );
-        const url = linkElement
-          ?.getAttribute("href")
-          ?.replace(/(\?.*)$/, "");
+        const url = linkElement?.getAttribute("href")?.replace(/(\?.*)$/, "");
         const price = element
           ?.querySelector(".search-result-price")
           ?.textContent.trim();
