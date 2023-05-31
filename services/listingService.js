@@ -16,6 +16,9 @@ const scrapeListings = async (url) => {
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
+      '--window-position=0,0',
+      '--ignore-certifcate-errors',
+      '--ignore-certifcate-errors-spki-list',
     ],
     executablePath:
       process.env.NODE_ENV === "production"
