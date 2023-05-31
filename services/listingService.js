@@ -1,5 +1,5 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer-extra");
+const puppeteer = require("puppeteer");
 // const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 // const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 
@@ -16,9 +16,6 @@ const scrapeListings = async (url) => {
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
-      '--window-position=0,0',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
     ],
     executablePath:
       process.env.NODE_ENV === "production"
