@@ -17,6 +17,7 @@ const scrapeListings = async (url) => {
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
+      `--proxy-server=${process.env.PROXY}`,
     ],
     executablePath:
       process.env.NODE_ENV === "production"
@@ -30,14 +31,10 @@ const scrapeListings = async (url) => {
   let currentPage = 1;
   const allListings = [];
 
-  page.on("request", async (request) => {
-    try {
-      await useProxy(request, process.env.PROXY);
-    } catch (error) {
-      console.error("Error handling request:", error);
-      request.continue();
-    }
-  });
+  await useProxy(page, process.env.PROXY);
+
+  const data = await useProxy.lookup(page);
+  console.log("Page IP:", data.ip);
 
   while (true) {
     console.log("Scraping page:", currentPage);
