@@ -9,8 +9,6 @@ puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 puppeteer.use(
   pluginProxy({
     proxy: process.env.PROXY,
-    username: process.env.PROXY_USERNAME,
-    password: process.env.PROXY_PASSWORD,
   })
 );
 
