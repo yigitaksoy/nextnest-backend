@@ -37,13 +37,13 @@
 //     process.exit(1);
 //   });
 const express = require("express");
-const { scrapeListings } = require("./services/listingService");
+const { scrapeLogic } = require("./scrapeLogic");
 const app = express();
 
 const PORT = process.env.PORT || 4000;
 
 app.get("/scrape", (req, res) => {
-  scrapeListings(res);
+  scrapeLogic(res);
 });
 
 app.get("/", (req, res) => {
