@@ -31,9 +31,10 @@ const scrapeListings = async (url) => {
   const allListings = [];
 
   page.on("request", async (request) => {
-    if (!request.isNavigationRequest()) {
+    try {
       await useProxy(request, process.env.PROXY);
-    } else {
+    } catch (error) {
+      console.error("Error handling request:", error);
       request.continue();
     }
   });
