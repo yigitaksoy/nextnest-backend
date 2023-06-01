@@ -37,7 +37,7 @@
 //     process.exit(1);
 //   });
 const express = require("express");
-const { scrapeListings } = require("./routes/api");
+const { scrapeListings } = require("./services/listingService");
 const app = express();
 
 const PORT = process.env.PORT || 4000;
