@@ -5,7 +5,7 @@ const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 const useProxy = require("puppeteer-page-proxy");
 
 puppeteer.use(StealthPlugin());
-// puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
@@ -111,43 +111,3 @@ const scrapeListings = async (url) => {
 module.exports = {
   scrapeListings,
 };
-
-// const puppeteer = require("puppeteer");
-// require("dotenv").config();
-
-// const scrapeListings = async (res) => {
-//   const browser = await puppeteer.launch({
-//     args: [
-//       "--disable-setuid-sandbox",
-//       "--no-sandbox",
-//       "--single-process",
-//       "--no-zygote",
-//     ],
-//     executablePath:
-//       process.env.NODE_ENV === "production"
-//         ? process.env.PUPPETEER_EXECUTABLE_PATH
-//         : puppeteer.executablePath(),
-//   });
-//   try {
-//     const page = await browser.newPage();
-
-//     await page.goto("https://www.funda.nl/");
-
-//     // Wait for the page to load completely
-//     await page.waitForNavigation({ waitUntil: "networkidle0" });
-
-//     // Get the page title
-//     const pageTitle = await page.title();
-
-//     // Print the page title
-//     console.log(`Page Title: ${pageTitle}`);
-//     res.send(`Page Title: ${pageTitle}`);
-//   } catch (e) {
-//     console.error(e);
-//     res.send(`Something went wrong while running Puppeteer: ${e}`);
-//   } finally {
-//     await browser.close();
-//   }
-// };
-
-// module.exports = { scrapeListings };
