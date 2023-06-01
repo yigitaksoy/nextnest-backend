@@ -1,10 +1,18 @@
 require("dotenv").config();
-const puppeteer = require("puppeteer");
-// const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-// const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
+const pluginProxy = require("puppeteer-extra-plugin-proxy");
 
-// puppeteer.use(StealthPlugin());
-// puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+puppeteer.use(StealthPlugin());
+puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+puppeteer.use(
+  pluginProxy({
+    proxy: process.env.PROXY,
+    username: process.env.PROXY_USERNAME,
+    password: process.env.PROXY_PASSWORD,
+  })
+);
 
 const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
@@ -22,7 +30,7 @@ const scrapeListings = async (url) => {
         : puppeteer.executablePath(),
   });
   const page = await browser.newPage();
-  
+
   // await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36');
 
   await page.setViewport({ width: 1080, height: 1024 });
