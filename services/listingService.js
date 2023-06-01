@@ -1,146 +1,153 @@
-// require("dotenv").config();
-// const puppeteer = require("puppeteer-extra");
-// const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-// const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
-// const useProxy = require("puppeteer-page-proxy");
-
-// puppeteer.use(StealthPlugin());
-// // puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
-
-// const scrapeListings = async (url) => {
-//   console.log("Scraping listings for URL:", url);
-
-//   const browser = await puppeteer.launch({
-//     args: [
-//       "--disable-setuid-sandbox",
-//       "--disable-web-security",
-//       "--no-sandbox",
-//       "--single-process",
-//       "--no-zygote",
-//       `--proxy-server=${process.env.PROXY}`,
-//     ],
-//     executablePath:
-//       process.env.NODE_ENV === "production"
-//         ? process.env.PUPPETEER_EXECUTABLE_PATH
-//         : puppeteer.executablePath(),
-//   });
-//   const page = await browser.newPage();
-
-//   await page.setViewport({ width: 1080, height: 1024 });
-
-//   await page.setBypassCSP(true);
-
-//   let currentPage = 1;
-//   const allListings = [];
-
-//   await useProxy(page, process.env.PROXY);
-
-//   const data = await useProxy.lookup(page);
-//   console.log("Page IP:", data.ip);
-
-//   while (true) {
-//     console.log("Scraping page:", currentPage);
-//     await page.setRequestInterception(true);
-
-//     await page.goto(url, { waitUntil: "domcontentloaded" });
-
-//     const listings = await page.evaluate(() => {
-//       const elements = Array.from(document.querySelectorAll(".search-result"));
-
-//       return elements.map((element) => {
-//         const image = element?.querySelector(".search-result-image img")?.src;
-//         const title = element
-//           ?.querySelector(".search-result__header-title")
-//           ?.textContent.trim();
-//         const linkElement = element.querySelector(
-//           ".search-result-main a[data-object-url-tracking='resultlist']"
-//         );
-//         const url = linkElement?.getAttribute("href")?.replace(/(\?.*)$/, "");
-//         const price = element
-//           ?.querySelector(".search-result-price")
-//           ?.textContent.trim();
-//         const details = Array.from(
-//           element?.querySelectorAll(".search-result-kenmerken li")
-//         ).map((li) => li.textContent.trim());
-
-//         return {
-//           image,
-//           title,
-//           url: url.startsWith("https://www.funda.nl")
-//             ? url
-//             : `https://www.funda.nl${url}`, // Add base URL to the scraped URL if necessary
-//           price,
-//           details,
-//         };
-//       });
-//     });
-
-//     allListings.push(...listings);
-
-//     const nextPageButton = await page.$(
-//       ".pagination-pages a[aria-current='page'] + a"
-//     );
-//     if (!nextPageButton || currentPage >= 28) {
-//       break; // Exit the loop if there's no next page button or reached the end of pagination
-//     }
-
-//     const nextPageUrl = await page.evaluate(
-//       (nextPageButton) => nextPageButton.href,
-//       nextPageButton
-//     );
-//     currentPage++;
-//     await page.goto(nextPageUrl, { waitUntil: "domcontentloaded" });
-//   }
-
-//   await browser.close();
-
-//   allListings.forEach((listing) => {
-//     console.log("Listing URL:", listing.url);
-//   });
-
-//   return allListings;
-// };
-
-// module.exports = {
-//   scrapeListings,
-// };
-
-const puppeteer = require("puppeteer");
 require("dotenv").config();
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
+const useProxy = require("puppeteer-page-proxy");
 
-const scrapeListings = async (res) => {
+puppeteer.use(StealthPlugin());
+// puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+
+const scrapeListings = async (url) => {
+  console.log("Scraping listings for URL:", url);
+
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
+      "--disable-web-security",
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
+      `--proxy-server=${process.env.PROXY}`,
     ],
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
-  try {
-    const page = await browser.newPage();
+  const page = await browser.newPage();
 
-    await page.goto("https://www.funda.nl/");
+  await page.setViewport({ width: 1080, height: 1024 });
 
-    // Wait for the page to load completely
-    await page.waitForNavigation({ waitUntil: "networkidle0" });
+  await page.setBypassCSP(true);
 
-    // Get the page title
-    const pageTitle = await page.title();
+  let currentPage = 1;
+  const allListings = [];
 
-    // Print the page title
-    console.log(`Page Title: ${pageTitle}`);
-    res.send(`Page Title: ${pageTitle}`);
-  } catch (e) {
-    console.error(e);
-    res.send(`Something went wrong while running Puppeteer: ${e}`);
-  } finally {
-    await browser.close();
+  await useProxy(page, process.env.PROXY);
+
+  const data = await useProxy.lookup(page);
+  console.log("Page IP:", data.ip);
+
+  while (true) {
+    console.log("Scraping page:", currentPage);
+    await page.setRequestInterception(true);
+
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+
+    // Wait for the title element to appear
+    await page.waitForSelector("title");
+
+    // Extract the page title
+    const title = await page.title();
+    console.log("Page Title:", title);
+
+    const listings = await page.evaluate(() => {
+      const elements = Array.from(document.querySelectorAll(".search-result"));
+
+      return elements.map((element) => {
+        const image = element?.querySelector(".search-result-image img")?.src;
+        const title = element
+          ?.querySelector(".search-result__header-title")
+          ?.textContent.trim();
+        const linkElement = element.querySelector(
+          ".search-result-main a[data-object-url-tracking='resultlist']"
+        );
+        const url = linkElement?.getAttribute("href")?.replace(/(\?.*)$/, "");
+        const price = element
+          ?.querySelector(".search-result-price")
+          ?.textContent.trim();
+        const details = Array.from(
+          element?.querySelectorAll(".search-result-kenmerken li")
+        ).map((li) => li.textContent.trim());
+
+        return {
+          image,
+          title,
+          url: url.startsWith("https://www.funda.nl")
+            ? url
+            : `https://www.funda.nl${url}`, // Add base URL to the scraped URL if necessary
+          price,
+          details,
+        };
+      });
+    });
+
+    allListings.push(...listings);
+
+    const nextPageButton = await page.$(
+      ".pagination-pages a[aria-current='page'] + a"
+    );
+    if (!nextPageButton || currentPage >= 28) {
+      break; // Exit the loop if there's no next page button or reached the end of pagination
+    }
+
+    const nextPageUrl = await page.evaluate(
+      (nextPageButton) => nextPageButton.href,
+      nextPageButton
+    );
+    currentPage++;
+    await page.goto(nextPageUrl, { waitUntil: "domcontentloaded" });
   }
+
+  await browser.close();
+
+  allListings.forEach((listing) => {
+    console.log("Listing URL:", listing.url);
+  });
+
+  return allListings;
 };
 
-module.exports = { scrapeListings };
+module.exports = {
+  scrapeListings,
+};
+
+// const puppeteer = require("puppeteer");
+// require("dotenv").config();
+
+// const scrapeListings = async (res) => {
+//   const browser = await puppeteer.launch({
+//     args: [
+//       "--disable-setuid-sandbox",
+//       "--no-sandbox",
+//       "--single-process",
+//       "--no-zygote",
+//     ],
+//     executablePath:
+//       process.env.NODE_ENV === "production"
+//         ? process.env.PUPPETEER_EXECUTABLE_PATH
+//         : puppeteer.executablePath(),
+//   });
+//   try {
+//     const page = await browser.newPage();
+
+//     await page.goto("https://www.funda.nl/");
+
+//     // Wait for the page to load completely
+//     await page.waitForNavigation({ waitUntil: "networkidle0" });
+
+//     // Get the page title
+//     const pageTitle = await page.title();
+
+//     // Print the page title
+//     console.log(`Page Title: ${pageTitle}`);
+//     res.send(`Page Title: ${pageTitle}`);
+//   } catch (e) {
+//     console.error(e);
+//     res.send(`Something went wrong while running Puppeteer: ${e}`);
+//   } finally {
+//     await browser.close();
+//   }
+// };
+
+// module.exports = { scrapeListings };
