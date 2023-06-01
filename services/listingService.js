@@ -124,29 +124,17 @@ const scrapeListings = async (res) => {
   try {
     const page = await browser.newPage();
 
-    await page.goto("https://developer.chrome.com/");
+    await page.goto("https://www.funda.nl/");
 
-    // Set screen size
-    await page.setViewport({ width: 1080, height: 1024 });
+    // Wait for the page to load completely
+    await page.waitForNavigation({ waitUntil: "networkidle0" });
 
-    // Type into search box
-    await page.type(".search-box__input", "automate beyond recorder");
+    // Get the page title
+    const pageTitle = await page.title();
 
-    // Wait and click on first result
-    const searchResultSelector = ".search-box__link";
-    await page.waitForSelector(searchResultSelector);
-    await page.click(searchResultSelector);
-
-    // Locate the full title with a unique string
-    const textSelector = await page.waitForSelector(
-      "text/Customize and automate"
-    );
-    const fullTitle = await textSelector.evaluate((el) => el.textContent);
-
-    // Print the full title
-    const logStatement = `The title of this blog post is ${fullTitle}`;
-    console.log(logStatement);
-    res.send(logStatement);
+    // Print the page title
+    console.log(`Page Title: ${pageTitle}`);
+    res.send(`Page Title: ${pageTitle}`);
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
