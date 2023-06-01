@@ -8,6 +8,7 @@ puppeteer.use(StealthPlugin());
 puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 puppeteer.use(
   pluginProxy({
+    url: process.env.URL,
     proxy: process.env.PROXY,
   })
 );
