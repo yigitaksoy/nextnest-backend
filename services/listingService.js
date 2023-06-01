@@ -5,7 +5,7 @@ const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 const useProxy = require("puppeteer-page-proxy");
 
 puppeteer.use(StealthPlugin());
-puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
+// puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const scrapeListings = async (url) => {
   console.log("Scraping listings for URL:", url);
@@ -27,6 +27,8 @@ const scrapeListings = async (url) => {
   const page = await browser.newPage();
 
   await page.setViewport({ width: 1080, height: 1024 });
+
+  await page.setBypassCSP(true);
 
   let currentPage = 1;
   const allListings = [];
