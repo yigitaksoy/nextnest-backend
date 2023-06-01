@@ -2,6 +2,7 @@ require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
+const useProxy = require("puppeteer-page-proxy");
 
 puppeteer.use(StealthPlugin());
 puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
@@ -12,10 +13,10 @@ const scrapeListings = async (url) => {
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
+      "--disable-web-security",
       "--no-sandbox",
       "--single-process",
       "--no-zygote",
-      `--proxy-server=${process.env.PROXY}`,
     ],
     executablePath:
       process.env.NODE_ENV === "production"
@@ -31,6 +32,11 @@ const scrapeListings = async (url) => {
 
   while (true) {
     console.log("Scraping page:", currentPage);
+    await page.setRequestInterception(true);
+    page.on("request", async (request) => {
+      await useProxy(request, process.env.PROXY);
+    });
+
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
     const listings = await page.evaluate(() => {
