@@ -30,12 +30,18 @@ const scrapeListings = async (url) => {
   let currentPage = 1;
   const allListings = [];
 
+  page.on("request", async (request) => {
+    if (!request._handled) {
+      request._handled = true;
+      await useProxy(request, process.env.PROXY);
+    } else {
+      request.continue();
+    }
+  });
+
   while (true) {
     console.log("Scraping page:", currentPage);
     await page.setRequestInterception(true);
-    page.on("request", async (request) => {
-      await useProxy(request, process.env.PROXY);
-    });
 
     await page.goto(url, { waitUntil: "domcontentloaded" });
 
