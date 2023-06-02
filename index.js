@@ -21,6 +21,10 @@ connectToDatabase()
   .then(() => {
     console.log("Connected to the database");
 
+    app.get("/", (req, res) => {
+      res.send("Server Status: OK");
+    });
+
     // API routes
     app.use("/api", apiRoutes);
 
