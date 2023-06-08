@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const { connectToDatabase } = require("./config/database");
 const apiRoutes = require("./routes/api");
-const path = require("path");
+const errorHandler = require("./middleware/errorHandler");
+const { verifyToken } = require("./middleware/verifyToken");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,43 +20,26 @@ app.set("view engine", "ejs");
 
 // Connect to the database
 connectToDatabase()
-  .then(() => {
+  .then((admin) => {
     console.log("Connected to the database");
 
+    // Define a route for server status
     app.get("/", (req, res) => {
       res.send("Server Status: OK");
     });
 
-    // API routes
-    app.use("/api", apiRoutes);
+    // API routes with token verification middleware
+    app.use("/api", verifyToken(admin), apiRoutes);
+
+    // Error handler middleware
+    app.use(errorHandler);
 
     // Start the server
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
-
-    // Schedule the cron job
-    // scheduleCronJob();
   })
   .catch((error) => {
-    console.error("Database connection error:", error);
+    console.error("Database connection error:", error.message);
     process.exit(1);
   });
-
-// const express = require("express");
-// const { scrapeLogic } = require("./scrapeLogic");
-// const app = express();
-
-// const PORT = process.env.PORT || 4000;
-
-// app.get("/scrape", (req, res) => {
-//   scrapeLogic(res);
-// });
-
-// app.get("/", (req, res) => {
-//   res.send("Render Puppeteer server is up and running!");
-// });
-
-// app.listen(PORT, () => {
-//   console.log(`Listening on port ${PORT}`);
-// });
