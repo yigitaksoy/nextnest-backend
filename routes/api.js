@@ -17,11 +17,10 @@ router.get("/scrape-listings", async (req, res) => {
       minSize,
       minBedrooms,
       email,
-      buurt,
     } = req.query;
 
     const listingTypeDutch = listingType === "huur" ? "huur" : "koop";
-    const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${buurt}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
+    const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
 
     console.log(`Started scraping listings for URL: ${url}`);
     const scrapedListings = await scrapeListings(url, listingType);
@@ -93,9 +92,9 @@ router.get("/scrape-listings", async (req, res) => {
                   listed_since: details.listed_since || "N/A",
                   status: details.status || "N/A",
                   type_apartment: details.type_apartment || "N/A",
-                  living_area: layout.living_area || "N/A",
-                  number_of_rooms: layout.number_of_rooms || "N/A",
-                  located_at: layout.located_at || "N/A",
+                  living_area: details.living_area || "N/A",
+                  number_of_rooms: details.number_of_rooms || "N/A",
+                  located_at: details.located_at || "N/A",
                 },
               },
             },
@@ -119,15 +118,5 @@ router.get("/scrape-listings", async (req, res) => {
       .json({ error: "An error occurred while processing your request" });
   }
 });
-
-// Schedule tasks to be run on the server.
-// cron.schedule("*/15 * * * *", async function () {
-//   console.log("Running a job at 01:00 at Amsterdam timezone");
-//   const users = await User.find({});
-//   for (const user of users) {
-//     await processListings(user);
-//   }
-//   console.log("Done! Thank you for using NextNest!");
-// });
 
 module.exports = router;
