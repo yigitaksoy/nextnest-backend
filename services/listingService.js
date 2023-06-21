@@ -1,14 +1,12 @@
 require("dotenv").config();
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 const useProxy = require("puppeteer-page-proxy");
 const { listingDetails } = require("./listingDetails");
 
 puppeteer.use(StealthPlugin());
-puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
-const scrapeListings = async (url) => {
+const scrapeListings = async (url, listingType) => {
   console.log("Scraping listings for URL:", url);
 
   try {
@@ -88,8 +86,12 @@ const scrapeListings = async (url) => {
         try {
           // Handle errors for individual listings
           const listing = listings[i];
-          const details = await listingDetails(page, listing.url);
-          listing.features = details;
+          const details = await listingDetails(page, listing.url, listingType);
+          listing.details = details;
+
+          // Add listingType and neighborhood
+          listing.listingType = listingType;
+          listing.neighbourhood = details.neighbourhood;
         } catch (error) {
           console.error(`Error scraping details for listing ${i}:`, error);
         }
