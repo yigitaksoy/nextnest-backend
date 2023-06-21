@@ -126,7 +126,7 @@ cron.schedule("*/15 * * * *", async function () {
   for (const user of users) {
     await processListings(user);
   }
-  console.log("Done! Thank you for using NextNest!");
+  console.log("Done! Thank you for using NextNest! 🚀");
 });
 
 module.exports = router;
