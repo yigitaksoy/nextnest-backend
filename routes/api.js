@@ -1,6 +1,7 @@
 const express = require("express");
 const { scrapeListings } = require("../services/listingService");
 const sendEmail = require("../config/email");
+const cron = require("node-cron");
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
 const Listing = require("../models/listing");
