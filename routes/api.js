@@ -123,7 +123,7 @@ router.get("/scrape-listings", async (req, res) => {
 cron.schedule("*/15 * * * *", async function () {
   try {
     console.log("Running a job at 01:00 at Amsterdam timezone");
-    const users = await User.findOne({});
+    const users = await User.find({});
     for (const user of users) {
       await processListings(user);
     }
