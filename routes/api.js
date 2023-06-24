@@ -1,6 +1,7 @@
 const express = require("express");
 const { scrapeListings } = require("../services/listingService");
 const sendEmail = require("../config/email");
+// const cron = require("node-cron");
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
 const Listing = require("../models/listing");
@@ -125,17 +126,17 @@ router.get("/scrape-listings", async (req, res) => {
 });
 
 // Schedule tasks to be run on the server.
-cron.schedule("*/15 * * * *", async function () {
-  try {
-    console.log("Running a job at 01:00 at Amsterdam timezone");
-    const users = await User.find({});
-    for (const user of users) {
-      await processListings(user);
-    }
-    console.log("Done! Thank you for using NextNest! 🚀");
-  } catch (error) {
-    console.error("Error running cron job:", error);
-  }
-});
+// cron.schedule("*/15 * * * *", async function () {
+//   try {
+//     console.log("Running a job at 01:00 at Amsterdam timezone");
+//     const users = await User.find({});
+//     for (const user of users) {
+//       await processListings(user);
+//     }
+//     console.log("Done! Thank you for using NextNest! 🚀");
+//   } catch (error) {
+//     console.error("Error running cron job:", error);
+//   }
+// });
 
 module.exports = router;
