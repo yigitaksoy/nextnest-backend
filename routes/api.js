@@ -1,7 +1,6 @@
 const express = require("express");
 const { scrapeListings } = require("../services/listingService");
 const sendEmail = require("../config/email");
-const cron = require("node-cron");
 const { v4: uuidv4 } = require("uuid");
 const User = require("../models/user");
 const Listing = require("../models/listing");
@@ -18,10 +17,14 @@ router.get("/scrape-listings", async (req, res) => {
       minSize,
       minBedrooms,
       email,
+      neighbourhood,
     } = req.query;
 
     const listingTypeDutch = listingType === "huur" ? "huur" : "koop";
-    const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
+    let neighbourhoods = Array.isArray(neighbourhood)
+      ? neighbourhood.join(",")
+      : neighbourhood;
+    const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${neighbourhoods}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
 
     console.log(`Started scraping listings for URL: ${url}`);
     const scrapedListings = await scrapeListings(url, listingType);
@@ -87,6 +90,7 @@ router.get("/scrape-listings", async (req, res) => {
                 url: listing.url,
                 price: listing.price,
                 neighbourhood: listing.neighbourhood,
+                postal_code: listing.postal_code,
                 listingType: listing.listingType,
                 details: {
                   price_per_m2,
@@ -117,19 +121,6 @@ router.get("/scrape-listings", async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while processing your request" });
-  }
-});
-// Schedule tasks to be run on the server.
-cron.schedule("*/15 * * * *", async function () {
-  try {
-    console.log("Running a job at 01:00 at Amsterdam timezone");
-    const users = await User.find({});
-    for (const user of users) {
-      await processListings(user);
-    }
-    console.log("Done! Thank you for using NextNest! 🚀");
-  } catch (error) {
-    console.error("Error running cron job:", error);
   }
 });
 
