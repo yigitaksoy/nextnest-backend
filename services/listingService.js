@@ -47,27 +47,25 @@ const scrapeListings = async (url, listingType) => {
 
     while (true) {
       console.log("Scraping page:", currentPage);
-      await page.goto(url, { waitUntil: "domcontentloaded" });
+      try {
+        await page.goto(url, { waitUntil: "domcontentloaded" });
+      } catch (error) {
+        console.error(`Error during navigation: ${error}`);
+        continue;
+      }
 
-      // Wait for the title element to appear
-      await page.waitForSelector("title");
+      // Wait for a progressive amount of time
+      await page.waitForTimeout(currentPage * 1000);
 
       // Extract the page title
       const title = await page.title();
       console.log("Page Title:", title);
 
-      // Fetch promo listings
-      const promoListings = await page.evaluate(() => {
-        const elements = Array.from(
-          document.querySelectorAll(".search-result-main-promo")
-        );
-
-        // elements.forEach((element) => {
-        //   console.log(element.outerHTML);
-        // });
-
-        return elements.map((element) => {
-          const image = element?.querySelector(".promo-thumbnail img")?.src;
+      const listings = await page.evaluate(() => {
+        const extractListingDetails = (element) => {
+          const image =
+            element?.querySelector(".search-result-image img")?.src ||
+            element?.querySelector(".promo-thumbnail img")?.src;
           const title = element
             ?.querySelector(".search-result__header-title")
             ?.textContent.trim();
@@ -78,9 +76,11 @@ const scrapeListings = async (url, listingType) => {
           const postal_code = element
             ?.querySelector(".search-result__header-subtitle")
             ?.textContent.trim();
-          const price = element
-            ?.querySelector(".search-result-price")
-            ?.textContent.trim();
+          const price = (
+            element
+              ?.querySelector(".search-result-price")
+              ?.textContent.trim() || ""
+          ).replace(/\s*k\.k\.\s*$/, "");
           const details = Array.from(
             element?.querySelectorAll(".search-result-kenmerken li")
           ).map((li) => li.textContent.trim());
@@ -96,57 +96,13 @@ const scrapeListings = async (url, listingType) => {
             price,
             details,
           };
-        });
-      });
+        };
 
-      const regularListings = await page.evaluate(() => {
         const elements = Array.from(
           document.querySelectorAll(".search-result")
         );
-
-        return elements
-          .filter(
-            (element) => !element.querySelector(".search-result-main-promo")
-          )
-          .map((element) => {
-            const image = element?.querySelector(
-              ".search-result-image img"
-            )?.src;
-            const title = element
-              ?.querySelector(".search-result__header-title")
-              ?.textContent.trim();
-            const linkElement = element.querySelector(
-              ".search-result-main a[data-object-url-tracking='resultlist']"
-            );
-            const url = linkElement
-              ?.getAttribute("href")
-              ?.replace(/(\?.*)$/, "");
-            const postal_code = element
-              ?.querySelector(".search-result__header-subtitle")
-              ?.textContent.trim();
-            const price = element
-              ?.querySelector(".search-result-price")
-              ?.textContent.trim();
-            const details = Array.from(
-              element?.querySelectorAll(".search-result-kenmerken li")
-            ).map((li) => li.textContent.trim());
-
-            return {
-              image,
-              title,
-              url:
-                url && url.startsWith("https://www.funda.nl")
-                  ? url
-                  : `https://www.funda.nl${url}`,
-              postal_code,
-              price,
-              details,
-            };
-          });
+        return elements.map(extractListingDetails);
       });
-
-      // Merge promo and regular listings
-      const listings = [...promoListings, ...regularListings];
 
       // Scrape details for each listing
       for (let i = 0; i < listings.length; i++) {
@@ -173,12 +129,11 @@ const scrapeListings = async (url, listingType) => {
         break;
       }
 
-      const nextPageUrl = await page.evaluate(
+      currentPage++;
+      url = await page.evaluate(
         (nextPageButton) => nextPageButton.href,
         nextPageButton
       );
-      currentPage++;
-      await page.waitForNavigation({ waitUntil: "domcontentloaded" });
     }
 
     await browser.close();
