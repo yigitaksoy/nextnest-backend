@@ -144,7 +144,12 @@ const scrapeListings = async (url, listingType) => {
             listing.neighbourhood = details.neighbourhood;
           }
         } catch (error) {
-          console.error(`Error scraping details for listing ${i}:`, error);
+          console.error(
+            `Error scraping details for listing ${i} at ${listing.url}:`,
+            error
+          );
+          console.log("Listing:", listing);
+          throw error;
         }
       }
 
