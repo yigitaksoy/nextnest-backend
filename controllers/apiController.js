@@ -19,10 +19,10 @@ exports.scrapeListings = async (req, res) => {
 
 exports.syncListings = async () => {
   try {
-    const users = await User.find({});
+    const users = await User.find({ subscription: true });
 
     for (const user of users) {
-      if (user.subscription) {
+      if (user.userSearch && Object.keys(user.userSearch).length > 0) {
         const userId = user.uid;
         const queryParams = user.userSearch;
 
