@@ -43,8 +43,12 @@ const scrapeListings = async (url, listingType) => {
 
     await useProxy(page, process.env.PROXY);
 
-    const data = await useProxy.lookup(page);
-    console.log("Page IP:", data.ip);
+    try {
+      const data = await useProxy.lookup(page);
+      console.log("Page IP:", data.ip);
+    } catch (error) {
+      console.log("Failed to look up the proxy IP:", error);
+    }
 
     while (true) {
       console.log("Scraping page:", currentPage);
@@ -147,12 +151,7 @@ const scrapeListings = async (url, listingType) => {
             listing.neighbourhood = details.neighbourhood;
           }
         } catch (error) {
-          console.error(
-            `Error scraping details for listing ${i} at ${listing.url}:`,
-            error
-          );
-          console.log("Listing:", listing);
-          throw error;
+          console.error(`Error scraping details for listing ${i}:`, error);
         }
       }
 
