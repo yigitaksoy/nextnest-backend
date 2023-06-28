@@ -21,6 +21,7 @@ const scrapeListings = async (url, listingType) => {
       "--no-zygote",
       `--proxy-server=${process.env.PROXY}`,
     ],
+    protocolTimeout: 60000,
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
