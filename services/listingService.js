@@ -31,6 +31,8 @@ const scrapeListings = async (url, listingType) => {
   try {
     const page = await browser.newPage();
 
+    await page.setDefaultNavigationTimeout(0);
+
     await page.authenticate({
       username: process.env.PROXY_USER,
       password: process.env.PROXY_PASSWORD,
