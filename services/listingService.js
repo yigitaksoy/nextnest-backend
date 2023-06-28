@@ -30,6 +30,11 @@ const scrapeListings = async (url, listingType) => {
   try {
     const page = await browser.newPage();
 
+    await page.authenticate({
+      username: process.env.PROXY_USER,
+      password: process.env.PROXY_PASSWORD,
+    });
+
     await page.setExtraHTTPHeaders({
       "Accept-Language": "en-US,en;q=0.9",
       "User-Agent":
