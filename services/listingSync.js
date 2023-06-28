@@ -7,8 +7,8 @@ async function syncJob() {
   console.log("Done! Thank you for using NextNest! 🚀");
 }
 
-// Schedule the job to run every 5 minutes between 7 am and 11:59 pm
-cron.schedule("*/5 7-23 * * *", syncJob);
+// Schedule the job to run every 10 minutes between 7 am and 11:59 pm
+cron.schedule("*/10 7-23 * * *", syncJob);
 
-// Schedule the job to run every 5 minutes between 12 am and 2 am
-cron.schedule("*/5 0-2 * * *", syncJob);
+// Schedule the job to run every 10 minutes between 12 am and 2 am
+cron.schedule("*/10 0-2 * * *", syncJob);
