@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const { syncListings } = require("../controllers/apiController");
 
 async function syncJob() {
-  console.log("Running a job every 5 minutes between 7 am and 2 am.");
+  console.log("Running a job every 10 minutes between 7 am and 2 am.");
   await syncListings();
   console.log("Done! Thank you for using NextNest! 🚀");
 }
