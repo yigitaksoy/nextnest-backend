@@ -54,7 +54,7 @@ const scrapeListings = async (url, listingType) => {
     let currentPage = 1;
     const allListings = [];
 
-    await useProxy(page, process.env.PROXY);
+    // await useProxy(page, process.env.PROXY);
 
     try {
       const data = await useProxy.lookup(page);
