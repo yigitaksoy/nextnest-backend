@@ -63,7 +63,7 @@ const scrapeListings = async (url, listingType) => {
       const data = await useProxy.lookup(page);
       console.log("Page IP:", data.ip);
     } catch (error) {
-      console.log("Failed to look up the proxy IP:", error);
+      console.log("⛔ Failed to look up the proxy IP:", error);
     }
 
     while (true) {
@@ -81,7 +81,7 @@ const scrapeListings = async (url, listingType) => {
         } catch (error) {
           navigationAttempts++;
           console.error(
-            `Error during navigation attempt ${navigationAttempts}: ${error}`
+            `⛔ Error during navigation attempt ${navigationAttempts}: ${error}`
           );
           if (navigationAttempts >= 5) throw error; // if all attempts fail, throw the error
           await page.waitForTimeout(5000); // wait for 5 seconds before next attempt
@@ -138,7 +138,7 @@ const scrapeListings = async (url, listingType) => {
           return elements.map(extractListingDetails);
         });
       } catch (error) {
-        console.error("Error during page evaluation:", error);
+        console.error("⛔ Error during page evaluation:", error);
         // Implement your own error handling logic here...
       }
 
@@ -167,7 +167,7 @@ const scrapeListings = async (url, listingType) => {
             listing.neighbourhood = details.neighbourhood;
           }
         } catch (error) {
-          console.error(`Error scraping details for listing ${i}:`, error);
+          console.error(`⛔ Error scraping details for listing ${i}:`, error);
         }
       }
 
@@ -193,7 +193,7 @@ const scrapeListings = async (url, listingType) => {
 
     return allListings;
   } catch (error) {
-    console.error("Error scraping listings:", error);
+    console.error("⛔ Error scraping listings:", error);
     throw error;
   } finally {
     await browser.close();
