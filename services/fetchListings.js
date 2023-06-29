@@ -29,7 +29,7 @@ exports.fetchListings = async (userId, queryParams) => {
     }
     const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${neighbourhoods}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
 
-    console.log(`Started scraping listings for URL: ${url}`);
+    console.log(`🔍 Fetching listings: ${url}`);
     const scrapedListings = await scrapeListings(url, listingType);
 
     const user = await User.findOne({ uid: userId });
@@ -41,14 +41,12 @@ exports.fetchListings = async (userId, queryParams) => {
     );
 
     if (newScrapedListings.length > 0) {
-      console.log(
-        `Scraped ${newScrapedListings.length} new listings. Preparing to send email to ${email}`
-      );
+      console.log(`🏠 Found ${newScrapedListings.length} new listings!`);
 
       sendEmail(email, newScrapedListings);
-      console.log("Email sent");
+      console.log(`✉️ Email sent to ${email}`);
     } else {
-      console.log("No new listings to send email about.");
+      console.log("No new listings found");
     }
 
     for (const listing of newScrapedListings) {
@@ -65,7 +63,7 @@ exports.fetchListings = async (userId, queryParams) => {
         await newListing.save();
       } else {
         console.log(
-          `Listing "${listing.title}" already exists in Listings collection.`
+          `"${listing.title}" already exists in Listings collection.`
         );
       }
 
@@ -76,7 +74,7 @@ exports.fetchListings = async (userId, queryParams) => {
 
       // If the listing does not exist in the user's "userListings" array, add it
       if (!existingListingInUserListings) {
-        console.log("Updating user's userListings in the database");
+        console.log("Updating user's listings in the database");
         const details = listing.details || {};
         const layout = details.layout || {};
 
@@ -109,17 +107,15 @@ exports.fetchListings = async (userId, queryParams) => {
           { upsert: true, new: true }
         );
 
-        console.log("Successfully updated user's userListings");
+        console.log("Successfully updated user's listings");
       } else {
-        console.log(
-          `Listing "${listing.title}" already exists in user's userListings.`
-        );
+        console.log(`"${listing.title}" already exists in user's listings.`);
       }
     }
 
     return { listings: newScrapedListings };
   } catch (error) {
-    console.error("Error occurred in fetchListings function:", error);
+    console.error("⛔ Error occurred in fetchListings function:", error);
     throw error;
   }
 };
