@@ -29,7 +29,6 @@ exports.fetchListings = async (userId, queryParams) => {
     }
     const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${neighbourhoods}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
 
-    console.log(`🔍 Fetching listings: ${url}`);
     const scrapedListings = await scrapeListings(url, listingType);
 
     const user = await User.findOne({ uid: userId });
