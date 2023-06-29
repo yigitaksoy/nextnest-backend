@@ -4,7 +4,7 @@ const { syncListings } = require("../controllers/apiController");
 function syncJob() {
   return new Promise(async (resolve, reject) => {
     try {
-      console.log("Sync in progress... 📡  ");
+      console.log("📡 Sync in progress...   ");
       await syncListings();
       console.log("Done! Thank you for using NextNest! 🚀");
       resolve();
