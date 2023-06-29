@@ -10,10 +10,10 @@ exports.scrapeListings = async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    console.error("Error occurred in /scrape-listings route:", error);
+    console.error(" ⛔ Error occurred in /scrape-listings route:", error);
     res
       .status(500)
-      .json({ error: "An error occurred while processing your request" });
+      .json({ error: "⛔ An error occurred while processing your request" });
   }
 };
 
@@ -30,7 +30,7 @@ exports.syncListings = async () => {
       }
     }
   } catch (error) {
-    console.error("Error occurred in cronFetchListings:", error);
+    console.error("⛔ Error occurred in cronFetchListings:", error);
     throw error;
   }
 };
