@@ -1,4 +1,4 @@
-const User = require("../models/user"); // Replace with your User model
+const User = require("../models/user");
 const mongoose = require("mongoose");
 
 // POST route to register a user
@@ -12,10 +12,10 @@ exports.register = async (req, res) => {
       email,
       userSearch: {},
       userListings: [],
-      subsctiption: true,
+      subscription: true,
     });
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({ message: "User registered successfully!" });
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).json({ error: "An error occurred while registering user" });
@@ -26,7 +26,6 @@ exports.register = async (req, res) => {
 exports.getUserSearch = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log("FETCH User information:", user); // Debug statement
 
     // Check if the user is authenticated
     if (!user) {
@@ -51,11 +50,10 @@ exports.getUserSearch = async (req, res, next) => {
 exports.saveUserSearch = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log("SAVE User information:", user); // Debug statement
 
     // Check if the user is authenticated
     if (!user) {
-      return res.status(401).json({ message: "User not authenticated" });
+      return res.status(401).json({ message: "User not authenticated!" });
     }
 
     const {
