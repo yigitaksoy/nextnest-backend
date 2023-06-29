@@ -8,7 +8,7 @@ const { listingDetails } = require("./listingDetails");
 puppeteer.use(StealthPlugin());
 
 const scrapeListings = async (url, listingType) => {
-  console.log("Scraping listings for URL:", url);
+  console.log(`🔍 Fetching listings: ${url}`);
 
   const browser = await puppeteer.launch({
     headless: "false",
