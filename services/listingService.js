@@ -196,7 +196,8 @@ const scrapeListings = async (url, listingType) => {
     console.error("⛔ Error scraping listings:", error);
     throw error;
   } finally {
-    await browser.close();
+    const pages = await browser.close();
+    await Promise.all(pages.map(async (page) => page.close()));
   }
 };
 
