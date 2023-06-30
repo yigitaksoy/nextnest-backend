@@ -12,7 +12,7 @@ const scrapeListings = async (url, listingType) => {
 
   const browser = await puppeteer.launch({
     headless: "false",
-    slowMo: 2000,
+    // slowMo: 500,
     args: [
       "--disable-setuid-sandbox",
       "--disable-web-security",
@@ -21,7 +21,7 @@ const scrapeListings = async (url, listingType) => {
       "--no-zygote",
       `--proxy-server=${process.env.PROXY}`,
     ],
-    protocolTimeout: 60000,
+    // protocolTimeout: 60000,
     executablePath:
       process.env.NODE_ENV === "production"
         ? process.env.PUPPETEER_EXECUTABLE_PATH
@@ -31,7 +31,7 @@ const scrapeListings = async (url, listingType) => {
   try {
     const page = await browser.newPage();
 
-    await page.setDefaultNavigationTimeout(0);
+    // await page.setDefaultNavigationTimeout(600);
 
     await page.authenticate({
       username: process.env.PROXY_USER,
