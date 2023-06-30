@@ -74,7 +74,7 @@ const scrapeListings = async (url, listingType) => {
         // Maximum 5 attempts
         try {
           await page.goto(url, {
-            waitUntil: "networkidle2",
+            waitUntil: "domcontentloaded",
             timeout: 60000,
           });
           break; // break the loop if navigation succeeds
