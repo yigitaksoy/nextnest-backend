@@ -27,7 +27,14 @@ exports.fetchListings = async (userId, queryParams) => {
     } else {
       neighbourhoods = neighbourhood;
     }
-    const url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${neighbourhoods}/beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
+
+    let url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/`;
+
+    if (neighbourhoods !== "") {
+      url += `${neighbourhoods}/`;
+    }
+
+    url += `beschikbaar/${minPrice}-${maxPrice}/${minSize}+woonopp/${minBedrooms}+kamers/1-dag/`;
 
     const scrapedListings = await scrapeListings(url, listingType);
 
