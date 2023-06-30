@@ -16,4 +16,7 @@ function syncJob() {
 }
 
 // Schedule the job to run every 15 minutes between 7 am and 2 am
-cron.schedule("*/15 7-2 * * *", syncJob);
+// cron.schedule("*/15 7-2 * * *", syncJob);
+
+// Schedule the job to run every 15 minutes
+cron.schedule("*/10 7-2 * * *", syncJob);
