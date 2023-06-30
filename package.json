@@ -22,7 +22,7 @@
     "mongoose": "^7.2.4",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.2",
-    "puppeteer": "^20.7.3",
+    "puppeteer": "^20.7.4",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-proxy": "^1.0.2",
