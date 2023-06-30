@@ -10,7 +10,11 @@ function syncJob() {
       resolve();
     } catch (error) {
       console.error("⛔ Synchronization Error: ", error);
-      reject(error);
+      reject({
+        body: JSON.stringify({
+          error: error.message,
+        }),
+      });
     }
   });
 }
