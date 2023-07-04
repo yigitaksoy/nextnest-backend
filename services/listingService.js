@@ -77,6 +77,8 @@ const scrapeListings = async (url, listingType) => {
             waitUntil: "domcontentloaded",
             timeout: 60000,
           });
+          await page.waitForSelector("title");
+          console.log("Page title:", await page.title());
           break; // break the loop if navigation succeeds
         } catch (error) {
           navigationAttempts++;
