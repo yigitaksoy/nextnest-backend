@@ -4,6 +4,7 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const useProxy = require("puppeteer-page-proxy");
 const Listing = require("../models/listing");
 const { listingDetails } = require("./listingDetails");
+const { UA } = require("../helper/userAgents");
 
 puppeteer.use(StealthPlugin());
 
@@ -38,10 +39,15 @@ const scrapeListings = async (url, listingType) => {
       password: process.env.PROXY_PASSWORD,
     });
 
+    // await page.setExtraHTTPHeaders({
+    //   "Accept-Language": "en-US,en;q=0.9",
+    //   "User-Agent":
+    //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    // });
+
     await page.setExtraHTTPHeaders({
       "Accept-Language": "en-US,en;q=0.9",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+      "User-Agent": UA(),
     });
 
     await page.goto(url);
