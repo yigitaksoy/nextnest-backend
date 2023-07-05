@@ -75,29 +75,16 @@ const scrapeListings = async (url, listingType) => {
     while (true) {
       console.log("Fetching page:", currentPage);
 
-      let navigationAttempts = 0;
-      while (navigationAttempts < 5) {
-        // Maximum 5 attempts
-        try {
-          await page.goto(url, {
-            waitUntil: "domcontentloaded",
-            timeout: 60000,
-          });
-          await page.waitForSelector("title");
-          console.log("Page title:", await page.title());
-          break; // break the loop if navigation succeeds
-        } catch (error) {
-          navigationAttempts++;
-          console.error(
-            `⛔ Error during navigation attempt ${navigationAttempts}: ${error}`
-          );
-          if (navigationAttempts >= 5) throw error; // if all attempts fail, throw the error
-          await page.waitForTimeout(5000); // wait for 5 seconds before next attempt
-        }
+      try {
+        await page.goto(url, {
+          waitUntil: "domcontentloaded",
+        });
+        await page.waitForTimeout(3000);
+        await page.waitForSelector("title");
+        console.log("Page title:", await page.title());
+      } catch (error) {
+        console.log("Navigation failed:", error);
       }
-
-      // Wait for a progressive amount of time
-      await page.waitForTimeout(currentPage * 1000);
 
       let rawListings;
       try {
@@ -204,8 +191,6 @@ const scrapeListings = async (url, listingType) => {
     console.error("⛔ Error scraping listings:", error);
     throw error;
   } finally {
-    const pages = await browser.pages();
-    await Promise.all(pages.map((page) => page.close()));
     await browser.close();
   }
 };
