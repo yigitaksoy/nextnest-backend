@@ -18,24 +18,37 @@ exports.fetchListings = async (userId, queryParams) => {
     } = queryParams;
 
     const listingTypeDutch = listingType === "huur" ? "huur" : "koop";
-    let neighbourhoods = "";
 
-    if (Array.isArray(neighbourhood)) {
-      neighbourhoods = neighbourhood.map((obj) => obj.value).join(",");
-    } else if (typeof neighbourhood === "object") {
-      neighbourhoods = neighbourhood.value;
+    let selectedArea = "";
+
+    if (typeof neighbourhood === "string" && neighbourhood.includes(",")) {
+      selectedArea = neighbourhood
+        .split(",")
+        .map((val) => `"${val.trim()}"`)
+        .join(",");
+    } else if (typeof neighbourhood === "string" && neighbourhood !== "") {
+      selectedArea = `"${neighbourhood}"`;
     } else {
-      neighbourhoods = neighbourhood;
+      selectedArea = `"${location}"`;
     }
 
-    let minSizeString = minSize !== "0" ? `${minSize}+woonopp/` : "";
-    let minBedroomsString = minBedrooms !== "0" ? `${minBedrooms}+kamers/` : "";
+    let price = `"${minPrice}-${maxPrice}"`;
+    let floorArea = minSize !== "0" ? `&floor_area="${minSize}-"` : "";
+    let rooms = minBedrooms !== "0" ? `&rooms="${minBedrooms}-"` : "";
 
-    let url = `https://www.funda.nl/en/${listingTypeDutch}/${location}/${
-      neighbourhoods ? neighbourhoods + "/" : ""
-    }beschikbaar/${minPrice}-${maxPrice}/${minSizeString}${minBedroomsString}1-dag/`;
+    let url = `https://www.funda.nl/en/zoeken/${listingTypeDutch}?selected_area=[${selectedArea}]&price=${price}${floorArea}${rooms}&publication_date=1`;
 
-    const scrapedListings = await scrapeListings(url, listingType);
+    let scrapedListings;
+    try {
+      scrapedListings = await scrapeListings(url, listingType);
+    } catch (error) {
+      console.error(
+        `⛔ Error occurred while scraping listings from ${url}`,
+        error
+      );
+
+      return;
+    }
 
     const user = await User.findOne({ uid: userId });
     const newScrapedListings = scrapedListings.filter(
@@ -49,9 +62,9 @@ exports.fetchListings = async (userId, queryParams) => {
       console.log(`🏠 Found ${newScrapedListings.length} new listings!`);
 
       sendEmail(email, newScrapedListings);
-      console.log(`✉️ Email sent to ${email}`);
+      console.log(`✉️  Email sent to ${email}`);
     } else {
-      console.log("No new listings found");
+      console.log("No new listings found.");
     }
 
     for (const listing of newScrapedListings) {
@@ -79,7 +92,7 @@ exports.fetchListings = async (userId, queryParams) => {
 
       // If the listing does not exist in the user's "userListings" array, add it
       if (!existingListingInUserListings) {
-        console.log("Updating user's listings in the database");
+        console.log("Updating user's userListings in the database");
         const details = listing.details || {};
         const layout = details.layout || {};
 
@@ -112,7 +125,7 @@ exports.fetchListings = async (userId, queryParams) => {
           { upsert: true, new: true }
         );
 
-        console.log("Successfully updated user's listings");
+        console.log("Successfully updated user's userListings");
       } else {
         console.log(`"${listing.title}" already exists in user's listings.`);
       }
