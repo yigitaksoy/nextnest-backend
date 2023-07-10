@@ -14,12 +14,22 @@ const listingDetails = async (page, url, listingType) => {
 
         // If the page title is in Dutch, try to switch language
         if (title.includes("te koop") || title.includes("te huur")) {
-          try {
-            await page.waitForSelector("#langSwitch", { timeout: 5000 });
-            await page.select("#langSwitch", "en");
-            await page.waitForTimeout(5000);
-          } catch (error) {
-            console.log("Could not find language switcher");
+          let langSwitched = false;
+          let attempts = 0;
+          while (!langSwitched && attempts < 5) {
+            // max 10 attempts
+            try {
+              await page.waitForSelector("#langSwitch", { timeout: 5000 });
+              await page.select("#langSwitch", "en");
+              await page.waitForTimeout(5000);
+              langSwitched = true;
+            } catch (error) {
+              attempts++;
+              console.log("Could not find language switcher, trying again...");
+            }
+          }
+          if (!langSwitched) {
+            console.log("Failed to switch language after maximum attempts");
           }
         }
 
