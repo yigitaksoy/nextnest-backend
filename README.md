@@ -1,8 +1,8 @@
 <!-- <h3 align="center">
-<img src="https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest.png" alt="NextNest Logo">
+<img src="https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest-larger.png" alt="NextNest Logo">
 </h3> -->
 
-![NextNest](https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest-larger.png)
+![NextNest](https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest-reduce-canvas.png)
 
 ---
 
