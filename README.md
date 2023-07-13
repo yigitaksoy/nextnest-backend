@@ -2,7 +2,7 @@
 <img src="https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest.png" alt="NextNest Logo">
 </h3> -->
 
-![NextNest](https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest.png)
+![NextNest](https://github.com/yigitaksoy/nextnest-backend/blob/master/nextnest-larger.png)
 
 ### About
 
