@@ -31,7 +31,13 @@ exports.syncListings = async () => {
       )
       .map((user) => {
         const userId = user.uid;
-        const queryParams = user.userSearch;
+        const queryParams = { ...user.userSearch };
+
+        if (queryParams.neighbourhood && queryParams.neighbourhood.length > 0) {
+          queryParams.neighbourhood = queryParams.neighbourhood.map(
+            (neighbourhoodObj) => neighbourhoodObj.value
+          );
+        }
 
         // Return a promise for each job
         return new Promise((resolve, reject) => {
