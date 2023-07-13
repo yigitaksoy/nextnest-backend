@@ -16,7 +16,7 @@ const listingDetails = async (page, url, listingType) => {
         if (title.includes("te koop") || title.includes("te huur")) {
           let langSwitched = false;
           let attempts = 0;
-          while (!langSwitched && attempts < 5) {
+          while (!langSwitched && attempts < 10) {
             // max 10 attempts
             try {
               await page.waitForSelector("#langSwitch", { timeout: 5000 });
@@ -25,11 +25,13 @@ const listingDetails = async (page, url, listingType) => {
               langSwitched = true;
             } catch (error) {
               attempts++;
-              console.log("Could not find language switcher, trying again...");
+              console.log(
+                "⚠️ Could not find language switcher, trying again..."
+              );
             }
           }
           if (!langSwitched) {
-            console.log("Failed to switch language after maximum attempts");
+            console.log("⛔ Failed to switch language after maximum attempts");
           }
         }
 
@@ -105,7 +107,7 @@ const listingDetails = async (page, url, listingType) => {
         return details;
       });
     } catch (error) {
-      console.error("Error during page evaluation:", error);
+      console.error("⛔ Error during page evaluation:", error);
       // Implement your own error handling logic here...
     }
 
@@ -135,7 +137,7 @@ const listingDetails = async (page, url, listingType) => {
 
     return details;
   } catch (error) {
-    console.error("Error scraping listing details:", error);
+    console.error("⛔ Error fetching listing details:", error);
     throw error;
   }
 };
