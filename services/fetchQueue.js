@@ -13,7 +13,7 @@ const fetchQueue = new Queue(
   },
   {
     concurrent: 1, // Limit the number of concurrent jobs
-    maxTimeout: 180000, // Set a maximum timeout to 3 minutes
+    maxTimeout: 1200000, // Set a maximum timeout to 20 minutes
   }
 );
 
